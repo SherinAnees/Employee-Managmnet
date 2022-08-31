@@ -12,11 +12,13 @@ export default function Form() {
   const [formData, setFormData] = useReducer(formReducer, {});
   const handleSubmit = (e) => {
     e.preventDefault();
-
+    //to check the data obj isempty or not
+    if (Object.keys(formData).length == 0)
+      return console.log("Don't have Form Data");
     console.log(formData);
   };
-  if (Object.keys(formData).length > 0)
-    return <Success message={"Data Added"} />;
+  // if (Object.keys(formData).length > 0)
+  //   return <Success message={"Data Added"} />;
 
   return (
     <form className="grid lg:grid-cols-2 w-4/6 gap-4" onSubmit={handleSubmit}>
