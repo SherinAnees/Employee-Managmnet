@@ -1,10 +1,22 @@
 import Users from "../modals/user";
 //get:/api/users
-export async function getUser(req, res) {
+export async function getUsers(req, res) {
   try {
     const users = await Users.find({});
     if (!users) return res.status(404).json({ error: "No users found" });
     res.status(200).json(users);
+  } catch (error) {
+    res.status(404).json({ error: "Error while fetching data" });
+  }
+}
+// to get single user
+//get:/api/users/userId
+export async function getUser(req, res) {
+  try {
+    const { userId } = req.query;
+    const user = await Users.findById(userId);
+    if (!user) return res.status(404).json({ error: "No users found" });
+    res.status(200).json(user);
   } catch (error) {
     res.status(404).json({ error: "Error while fetching data" });
   }

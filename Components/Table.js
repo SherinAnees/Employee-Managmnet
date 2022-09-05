@@ -1,8 +1,11 @@
 import { FaUserEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import data from "../database/data.json";
+import { getEmployee } from "../library/helper";
 
 export default function Table() {
+  //datafetched from the backend and resolved
+  getEmployee().then((res) => console.log(res));
   return (
     <table className="min-w-full table-auto">
       <thead>
@@ -39,7 +42,11 @@ function Tr({ id, name, avatar, email, salary, date, status }) {
   return (
     <tr className="bg-gray-50 text-center">
       <td className="px-16 py-2 flex flex-row items-center">
-        <img src={avatar || "#"} alt="Profile" />
+        <img
+          className="h-8 w-8 rounded-full object-cover"
+          src={avatar || "#"}
+          alt="Profile"
+        />
         <span className="text-center ml-2 font-semibold">{name || ""}</span>
       </td>
       <td className="px-16 py-2">
