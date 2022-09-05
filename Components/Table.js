@@ -1,11 +1,16 @@
 import { FaUserEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
-import data from "../database/data.json";
+import { useQuery } from "react-query";
+
 import { getEmployee } from "../library/helper";
 
 export default function Table() {
   //datafetched from the backend and resolved
-  getEmployee().then((res) => console.log(res));
+  //getEmployee().then((res) => console.log(res));
+  //using react query
+  const { isLoading, isError, data, error } = useQuery("users", getEmployee);
+  if (isLoading) return <div>Employee is Loading...</div>;
+  if (isError) return <div>Got Error {error}</div>;
   return (
     <table className="min-w-full table-auto">
       <thead>
@@ -32,7 +37,7 @@ export default function Table() {
       </thead>
       <tbody className="bg-gray-200">
         {data.map((obj) => (
-          <Tr {...obj} key={obj.id} />
+          <Tr {...obj} key={obj._id} />
         ))}
       </tbody>
     </table>
@@ -60,8 +65,12 @@ function Tr({ id, name, avatar, email, salary, date, status }) {
       </td>
       <td className="px-16 py-2">
         <button className="cursor">
-          <span className="bg-green-500 text-white px-5 py-1 rounded-full">
-            {status || ""}
+          <span
+            className={`${
+              status == "Active" ? "bg-green-500" : "bg-rose-500"
+            } text-white px-5 py-1 rounded-full`}
+          >
+            {status || "Unknown"}
           </span>
         </button>
       </td>
