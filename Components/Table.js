@@ -1,16 +1,20 @@
 import { FaUserEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { useQuery } from "react-query";
+import { useDispatch, useSelector } from "react-redux";
 
 import { getEmployee } from "../library/helper";
+import { toggleChangeAction } from "../redux/reducer";
 
 export default function Table() {
   //datafetched from the backend and resolved
   //getEmployee().then((res) => console.log(res));
   //using react query
+
   const { isLoading, isError, data, error } = useQuery("users", getEmployee);
   if (isLoading) return <div>Employee is Loading...</div>;
   if (isError) return <div>Got Error {error}</div>;
+
   return (
     <table className="min-w-full table-auto">
       <thead>
@@ -44,6 +48,12 @@ export default function Table() {
   );
 }
 function Tr({ id, name, avatar, email, salary, date, status }) {
+  const visible = useSelector((state) => state.app.client.toggleForm);
+  const dispatch = useDispatch();
+  const handleUpdate = () => {
+    dispatch(toggleChangeAction());
+    console.log(visible);
+  };
   return (
     <tr className="bg-gray-50 text-center">
       <td className="px-16 py-2 flex flex-row items-center">
@@ -76,7 +86,11 @@ function Tr({ id, name, avatar, email, salary, date, status }) {
       </td>
       <td className="px-16 py-2 flex justify-center gap-5 items-center">
         <button className="cursor">
-          <FaUserEdit size={25} color={"rgb(34,197,94)"} />
+          <FaUserEdit
+            onClick={handleUpdate}
+            size={25}
+            color={"rgb(34,197,94)"}
+          />
         </button>
         <button className="cursor">
           <MdDelete size={25} color={"rgb(244,63,94)"} />
