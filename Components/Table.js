@@ -4,7 +4,7 @@ import { useQuery } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 
 import { getEmployee } from "../library/helper";
-import { toggleChangeAction } from "../redux/reducer";
+import { toggleChangeAction, updateAction } from "../redux/reducer";
 
 export default function Table() {
   //datafetched from the backend and resolved
@@ -47,12 +47,14 @@ export default function Table() {
     </table>
   );
 }
-function Tr({ id, name, avatar, email, salary, date, status }) {
-  const visible = useSelector((state) => state.app.client.toggleForm);
+function Tr({ _id, name, avatar, email, salary, date, status }) {
+  const isOpen = useSelector((state) => state.app.client.toggleForm);
   const dispatch = useDispatch();
   const handleUpdate = () => {
-    dispatch(toggleChangeAction());
-    console.log(visible);
+    dispatch(toggleChangeAction(_id));
+    if (isOpen) {
+      dispatch(updateAction(_id));
+    }
   };
   return (
     <tr className="bg-gray-50 text-center">

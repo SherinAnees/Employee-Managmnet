@@ -3,11 +3,14 @@ import { BiUserPlus } from "react-icons/bi";
 import Table from "../components/Table";
 import Form from "../components/Form";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleChangeAction } from "../redux/reducer";
 
 export default function Home() {
-  const [isOpen, setIsOpen] = useState(false);
+  const dispatch = useDispatch();
+  const isVisible = useSelector((state) => state.app.client.toggleForm);
   const handleChange = () => {
-    setIsOpen(!isOpen);
+    dispatch(toggleChangeAction());
   };
   return (
     <section>
@@ -37,7 +40,7 @@ export default function Home() {
         </div>
 
         {/* collapsable form */}
-        {isOpen ? <Form /> : <></>}
+        {isVisible ? <Form /> : <></>}
 
         {/* table */}
         <div className="container mx-auto">

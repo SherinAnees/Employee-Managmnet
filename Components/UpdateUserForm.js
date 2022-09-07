@@ -1,26 +1,42 @@
-import { useReducer } from "react";
 import { BiBrush } from "react-icons/bi";
 import Success from "./Success";
 import Bug from "./Bug";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import {
+  getEmployee,
+  getSingleEmployee,
+  updateEmployee,
+} from "../library/helper";
 
-const formReducer = (state, event) => {
-  return {
-    ...state,
-    [event.target.name]: event.target.value,
-  };
-};
+export default function UpdateUserForm({ formId, formData, setFormData }) {
+  const queryClient = useQueryClient();
+  const { isLoading, isError, data, error } = useQuery(["users", formId], () =>
+    getSingleEmployee(formId)
+  );
+  const UpdateMutation = useMutation(
+    (newData) => updateEmployee(formId, newData),
+    {
+      onSuccess: async (data) => {
+        // queryClient.setQueryData('users', (old) => [data])
+        queryClient.prefetchQuery("users", getEmployee);
+      },
+    }
+  );
 
-export default function UpdateUserForm() {
-  const [formData, setFormData] = useReducer(formReducer, {});
+  if (isLoading) return <div>Loading...!</div>;
+  if (isError) return <div>Error</div>;
 
-  const handleSubmit = (e) => {
+  const { name, avatar, salary, date, email, status } = data;
+  const [firstname, lastname] = name ? name.split(" ") : formData;
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (Object.keys(formData).length == 0)
-      return console.log("Don't have Form Data");
-    console.log(formData);
+    let userName = `${formData.firstname ?? firstname} ${
+      formData.lastname ?? lastname
+    }`;
+    let updated = Object.assign({}, data, formData, { name: userName });
+    await UpdateMutation.mutate(updated);
   };
-
-  if (Object.keys(formData).length > 0) return <Bug message={"Error"}></Bug>;
 
   return (
     <form className="grid lg:grid-cols-2 w-4/6 gap-4" onSubmit={handleSubmit}>
@@ -29,6 +45,7 @@ export default function UpdateUserForm() {
           type="text"
           onChange={setFormData}
           name="firstname"
+          defaultValue={firstname}
           className="border w-full px-5 py-3 focus:outline-none rounded-md"
           placeholder="FirstName"
         />
@@ -38,6 +55,7 @@ export default function UpdateUserForm() {
           type="text"
           onChange={setFormData}
           name="lastname"
+          defaultValue={lastname}
           className="border w-full px-5 py-3 focus:outline-none rounded-md"
           placeholder="LastName"
         />
@@ -47,6 +65,7 @@ export default function UpdateUserForm() {
           type="text"
           onChange={setFormData}
           name="email"
+          defaultValue={email}
           className="border w-full px-5 py-3 focus:outline-none rounded-md"
           placeholder="Email"
         />
@@ -56,6 +75,7 @@ export default function UpdateUserForm() {
           type="text"
           onChange={setFormData}
           name="salary"
+          defaultValue={salary}
           className="border w-full px-5 py-3 focus:outline-none rounded-md"
           placeholder="Salary"
         />
@@ -65,6 +85,7 @@ export default function UpdateUserForm() {
           type="date"
           onChange={setFormData}
           name="date"
+          defaultValue={date}
           className="border px-5 py-3 focus:outline-none rounded-md"
           placeholder="Salary"
         />
@@ -76,6 +97,7 @@ export default function UpdateUserForm() {
             type="radio"
             onChange={setFormData}
             value="Active"
+            defaultChecked={status == "Active"}
             id="radioDefault1"
             name="status"
             className="form-check-input appearance-none rounded-full h-4 w-4 border border-gray-300  bg-white checked:bg-green-500 checked:border-green-500 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer"
@@ -89,6 +111,7 @@ export default function UpdateUserForm() {
             type="radio"
             onChange={setFormData}
             value="Inactive"
+            defaultChecked={status !== "Active"}
             id="radioDefault2"
             name="status"
             className="form-check-input appearance-none rounded-full h-4 w-4 border border-gray-300  bg-white checked:bg-green-500 checked:border-green-500 focus:outline-none transition duration-200 mt-1 align-top bg-no-repeat bg-center bg-contain float-left mr-2 cursor-pointer"
