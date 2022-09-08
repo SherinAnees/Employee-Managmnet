@@ -4,7 +4,11 @@ import { useQuery } from "react-query";
 import { useDispatch, useSelector } from "react-redux";
 
 import { getEmployee } from "../library/helper";
-import { toggleChangeAction, updateAction } from "../redux/reducer";
+import {
+  deleteAction,
+  toggleChangeAction,
+  updateAction,
+} from "../redux/reducer";
 
 export default function Table() {
   //datafetched from the backend and resolved
@@ -56,6 +60,11 @@ function Tr({ _id, name, avatar, email, salary, date, status }) {
       dispatch(updateAction(_id));
     }
   };
+  const handleDelete = () => {
+    if (!isOpen) {
+      dispatch(deleteAction(_id));
+    }
+  };
   return (
     <tr className="bg-gray-50 text-center">
       <td className="px-16 py-2 flex flex-row items-center">
@@ -95,7 +104,7 @@ function Tr({ _id, name, avatar, email, salary, date, status }) {
           />
         </button>
         <button className="cursor">
-          <MdDelete size={25} color={"rgb(244,63,94)"} />
+          <MdDelete onClick={handleDelete} size={25} color={"rgb(244,63,94)"} />
         </button>
       </td>
     </tr>

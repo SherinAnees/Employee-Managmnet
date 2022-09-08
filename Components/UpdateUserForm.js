@@ -7,8 +7,12 @@ import {
   getSingleEmployee,
   updateEmployee,
 } from "../library/helper";
+import { useDispatch } from "react-redux";
+import { resetAction } from "../redux/reducer";
 
 export default function UpdateUserForm({ formId, formData, setFormData }) {
+  const dispatch = useDispatch();
+
   const queryClient = useQueryClient();
   const { isLoading, isError, data, error } = useQuery(["users", formId], () =>
     getSingleEmployee(formId)
@@ -36,6 +40,7 @@ export default function UpdateUserForm({ formId, formData, setFormData }) {
     }`;
     let updated = Object.assign({}, data, formData, { name: userName });
     await UpdateMutation.mutate(updated);
+    dispatch(resetAction());
   };
 
   return (

@@ -4,13 +4,30 @@ import Table from "../components/Table";
 import Form from "../components/Form";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { toggleChangeAction } from "../redux/reducer";
+import { deleteAction, toggleChangeAction } from "../redux/reducer";
+import { useQueryClient } from "react-query";
+import { deleteEmployee, getEmployee } from "../library/helper";
+import DeleteComponent from "../Components/DeleteComponent";
 
 export default function Home() {
   const dispatch = useDispatch();
   const isVisible = useSelector((state) => state.app.client.toggleForm);
+  const deleteId = useSelector((state) => state.app.client.deleteId);
+  const queryclient = useQueryClient();
   const handleChange = () => {
     dispatch(toggleChangeAction());
+  };
+  const deleteHandler = async () => {
+    if (deleteId) {
+      await deleteEmployee(deleteId);
+      await queryclient.prefetchQuery("users", getEmployee);
+      await dispatch(deleteAction(null));
+    }
+  };
+
+  const cancelHandler = async () => {
+    console.log("cancel");
+    await dispatch(deleteAction(null));
   };
   return (
     <section>
@@ -37,6 +54,7 @@ export default function Home() {
               </span>
             </button>
           </div>
+          {deleteId ? DeleteComponent({ deleteHandler, cancelHandler }) : <></>}
         </div>
 
         {/* collapsable form */}
